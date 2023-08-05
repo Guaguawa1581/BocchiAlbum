@@ -1,0 +1,46 @@
+#header {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 1000;
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem;
+    color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0.4);
+    font-family: "Barlow Condensed", sans-serif;
+
+    .nav_logo {
+      padding: 0.25rem;
+      cursor: pointer;
+      & > a {
+        color: white;
+        text-decoration: none;
+        letter-spacing: 2px;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+    }
+    .nav_item {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      a {
+        letter-spacing: 2px;
+        padding: 0.5rem;
+        background-image: $btnBgImage;
+        background-position: 50% 45%;
+        background-size: cover;
+        color: black;
+        line-height: 1.25rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    }
+  }
+}

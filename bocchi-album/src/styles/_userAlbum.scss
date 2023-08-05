@@ -1,0 +1,86 @@
+#album_page {
+  .page_banner {
+    position: fixed;
+    width: 100%;
+    font-size: 12px;
+    text-align: center;
+    letter-spacing: 5px;
+    // font-family: $mainFontFamily;
+  }
+  .card_container {
+    padding: 30px 20px;
+
+    // min-height: 85vh;
+    @media (min-width: 768px) {
+      padding: 50px 0;
+    }
+    .cards_masonry_grid {
+      display: flex;
+      margin-left: -30px; /* 調整間距 */
+      width: auto;
+
+      .cards_masonry_grid_column {
+        padding-left: 30px; /* 調整間距 */
+        background-clip: padding-box;
+        .image_cards {
+          margin-bottom: 16px;
+        }
+      }
+    }
+  }
+}
+
+.del_modal .ant-modal-content {
+  background-color: rgba($mainBgColor, 0.8);
+  border: 5px solid $mainColor;
+  color: $secondColor;
+  border-radius: 5px;
+  padding: 20px;
+  // height: 200px;
+  .ant-modal-close {
+    color: $secondColor;
+    top: 8px;
+    inset-inline-end: 8px;
+  }
+  .modal_text {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    span:first-child {
+      color: rgb(220 53 69);
+    }
+    p {
+      margin-bottom: 5px;
+      font-size: 1.25rem;
+      span {
+        font-weight: 700;
+      }
+    }
+  }
+  .modal_btns {
+    display: flex;
+    justify-content: space-around;
+    button {
+      box-sizing: border-box;
+      border: none;
+      background-color: $mainColor;
+      color: black;
+      font-weight: 600;
+      margin: 0 10px;
+      font-size: 1rem;
+      padding: 2px 10px;
+      transition: background 0.1s ease-in-out;
+      &:hover {
+        background-color: $mainColorHover;
+      }
+      &:last-child {
+        background-color: rgb(220 53 69);
+        color: rgb(255, 255, 255);
+        &:hover {
+          background-color: rgb(161 43 54);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+$mainColor: rgb(255, 240, 0);
+$mainColorHover: rgb(209, 195, 0);
+$secondColor: rgb(255, 255, 255);
+$mainBgColor: rgba(0, 0, 0, 0.6);
+$secondBgColor: rgb(36, 36, 36);
+$mainFontFamily: "Barlow Condensed", sans-serif;
+$homeBgImage: url("../images/side_project_bg_dark.jpg");
+$btnBgImage: url("../images/login_bg.jpg");
+$btnBgImage2: url("../images/login_bg2.jpg");
+$btnLogoutBg: url("../images/red_bg.png");
+$cameraSvg: url("../images/camera-svgrepo.svg");
+
+// views
+@import "./main";
+@import "./homePage";
+@import "./loginPage";
+@import "./registerPage";
+@import "./userAlbum";
+@import "./passwordPage";
+
+// components
+@import "./components/navbar";
+@import "./components/customInput";
+@import "./components/imageDrop";
+@import "./components/poster";
+@import "./components/imageCard";
+@import "./components/avatarPop";
+@import "./components/footer";
+@import "./components/loading";

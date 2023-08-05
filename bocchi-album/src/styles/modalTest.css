@@ -1,0 +1,165 @@
+/* 模态框内容的动画效果 */
+.modal-content {
+  animation: scaleIn 0.5s ease-in-out;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* 模态框背景的动画效果 */
+/* .ReactModal__Overlay {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+} */
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.dialog-enter {
+  left: -100%;
+  transition: left 300ms linear;
+}
+.dialog-enter-active {
+  left: 0;
+}
+.dialog-exit {
+  left: 0;
+  transition: left 300ms linear;
+}
+.dialog-exit-active {
+  left: -100%;
+}
+
+#modal-container {
+  position: fixed;
+  display: table;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  transform: scale(0);
+  z-index: 1;
+
+  &.three {
+    z-index: 0;
+    transform: scale(1);
+    .modal-background {
+      background: rgba(0, 0, 0, 0.6);
+      .modal {
+        animation: moveUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+      }
+    }
+    + .content {
+      z-index: 1;
+      animation: slideUpLarge 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+    &.out {
+      .modal-background {
+        .modal {
+          animation: moveDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        }
+      }
+      + .content {
+        animation: slideDownLarge 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+          forwards;
+      }
+    }
+  }
+}
+.modal-background {
+  display: table-cell;
+  background: rgba(0, 0, 0, 0.8);
+  text-align: center;
+  vertical-align: middle;
+  .modal {
+    background: white;
+    padding: 50px;
+    display: inline-block;
+    border-radius: 3px;
+    font-weight: 300;
+    position: relative;
+    h2 {
+      font-size: 25px;
+      line-height: 25px;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 18px;
+      line-height: 22px;
+    }
+    .modal-svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      border-radius: 3px;
+      rect {
+        stroke: #fff;
+        stroke-width: 2px;
+        stroke-dasharray: 778;
+        stroke-dashoffset: 778;
+      }
+    }
+  }
+}
+.test-modal-enter {
+  animation: moveDown 0.3s forwards;
+}
+
+.test-modal-exit {
+  animation: slideUpLarge 0.3s forwards;
+}
+@keyframes moveUp {
+  0% {
+    transform: translateY(150px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes moveDown {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(150px);
+  }
+}
+@keyframes slideUpLarge {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slideDownLarge {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}

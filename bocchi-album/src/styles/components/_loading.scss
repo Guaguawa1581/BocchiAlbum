@@ -1,0 +1,48 @@
+// Loading.scss
+.loading-container {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+
+  .loading-spinner-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: center;
+    transition: transform 0.3s;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  &.show {
+    pointer-events: auto;
+    .loading-spinner-background {
+      opacity: 1;
+    }
+
+    .loading-spinner {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+}

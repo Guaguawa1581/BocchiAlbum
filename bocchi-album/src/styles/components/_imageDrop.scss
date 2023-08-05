@@ -1,0 +1,70 @@
+.drop_box {
+  .dropzone {
+    min-width: 220px;
+    min-height: 220px;
+    border: 2px dashed $secondColor;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    .preview_image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 8px;
+    }
+    & > p {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .avatar_icon {
+      display: none;
+    }
+    &.avatar_type {
+      border-radius: 50%;
+      position: relative;
+      width: 240px;
+      height: 240px;
+      .dropzone_inner {
+        border-radius: 50%;
+        overflow: hidden;
+        min-width: inherit;
+        min-height: inherit;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .avatar_icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        right: 10%;
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+      }
+    }
+    &.error_hint {
+      border: 2px dashed red;
+    }
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+  .error_meg {
+    font-size: 1rem;
+    min-height: 30px;
+    margin: 0;
+    color: red;
+    &.avatar_err {
+      text-align: center;
+      margin-top: 10px;
+    }
+  }
+}

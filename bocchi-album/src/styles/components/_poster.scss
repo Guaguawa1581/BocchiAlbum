@@ -1,0 +1,205 @@
+#poster {
+  .post_btn_box {
+    position: fixed;
+    z-index: 10;
+    left: 10vw;
+    bottom: 80px;
+    height: 50px;
+    width: 50px;
+
+    transition: 0.3s all cubic-bezier(0.165, 0.84, 0.44, 1);
+    &.post_btn_box-enter {
+      opacity: 0;
+      transform: scale(0);
+    }
+    &.post_btn_box-enter-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    &.post_btn_box-exit-active {
+      opacity: 0;
+    }
+    &.post_btn_box-exit-done {
+      opacity: 0;
+
+      transform: scale(0);
+    }
+    .post_btn {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background-image: $btnBgImage;
+      // background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: 500%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0px 2px 10px 0px $mainBgColor;
+      cursor: pointer;
+      svg {
+        color: black;
+        font-size: 3rem;
+      }
+    }
+    &.hide {
+      transform: scale(0);
+    }
+  }
+}
+.poster_modal {
+  .modal_overlay {
+    // 定義遮罩層的樣式;
+    z-index: 1000;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.603);
+    inset: 0;
+    &.ReactModal__Overlay--after-open {
+      animation: fadeIn 300ms forwards;
+    }
+    &.ReactModal__Overlay--before-close {
+      animation: fadeOut 300ms forwards;
+    }
+  }
+
+  .modal_content {
+    // 定義 Modal 內容的樣式
+    position: absolute;
+    bottom: 2vh;
+    left: 0;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+
+    color: white;
+    background-color: rgba($mainBgColor, 0.8);
+    z-index: 1000;
+    overflow-y: scroll;
+    opacity: 0;
+    transform: translateY(100vh);
+    border: 5px solid $mainColor;
+    border-radius: 5px;
+    padding: 20px;
+
+    @media screen and (min-width: 400px) {
+      // height: 600px;
+      // top: 50%;
+      left: calc(50% - 200px);
+      bottom: 10vh;
+      // transform: translate(-50%, -50%);
+      &::-webkit-scrollbar {
+        width: 10px; /* 隱藏垂直捲動條 */
+      }
+      &::-webkit-scrollbar-track {
+        /* 可以添加背景顏色或者其他樣式 */
+        background-color: rgb(0, 0, 0);
+      }
+      &::-webkit-scrollbar-thumb {
+        /* 可以添加滑塊的背景顏色或者其他樣式 */
+        background-color: rgba(255, 255, 255, 0.4);
+        border-radius: 5px;
+      }
+    }
+
+    &.ReactModal__Content--after-open {
+      animation: moveUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+    &.ReactModal__Content--before-close {
+      animation: moveDown 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+    .modal_inner {
+      // 定義 Modal 內容內部的樣式
+      color: $mainColor;
+      .form_header {
+        display: flex;
+        justify-content: space-between;
+        h1 {
+          margin: 0;
+        }
+        svg {
+          font-size: 40px;
+          transform: translateY(-5px);
+          color: $secondColor;
+          cursor: pointer;
+        }
+      }
+
+      .form_container {
+        margin-top: 20px;
+
+        form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .public_check {
+            padding: 0 0.5rem;
+
+            .MuiFormControlLabel-label {
+              font-size: 20px;
+              color: $secondColor;
+            }
+          }
+          .submit_btn {
+            margin-top: 50px;
+            margin-bottom: 100px;
+            button {
+              font-size: 24px;
+              font-weight: 500;
+              padding: 2px 10px;
+              background-color: $mainColor;
+              color: rgb(0, 0, 0);
+              outline: none;
+              border: none;
+              &:hover {
+                background-color: $mainColorHover;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  @keyframes moveUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20vh) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes moveDown {
+    0% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(20vh) scale(0.8);
+    }
+  }
+  @keyframes fadeIn {
+    0% {
+      background: rgba(0, 0, 0, 0);
+    }
+    100% {
+      background: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  @keyframes fadeOut {
+    0% {
+      background: rgba(0, 0, 0, 0.6);
+    }
+    100% {
+      background: rgba(0, 0, 0, 0);
+    }
+  }
+}
+
+body.ReactModal__Body--open {
+  height: 100vh;
+  overflow-y: hidden;
+}

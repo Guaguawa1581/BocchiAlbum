@@ -1,0 +1,101 @@
+.register_page {
+  min-height: inherit;
+  background-color: $mainBgColor;
+  color: $mainColor;
+  font-family: $mainFontFamily;
+  .box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 80px;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    .title {
+      font-size: 2.5rem;
+      font-weight: 600;
+      letter-spacing: 5px;
+      margin-bottom: 1rem;
+    }
+
+    .form_box {
+      width: 100%;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      form > div {
+        margin-bottom: 1rem;
+      }
+      .avatar {
+        margin-bottom: 1rem;
+      }
+      .change_pwd_btn {
+        display: flex;
+        & > div {
+          display: flex;
+          box-sizing: border-box;
+          // border-bottom: 2px solid $mainColor;
+          padding-bottom: 5px;
+          & > span {
+            margin-left: 5px;
+            translate: 0 2px;
+            text-decoration: underline;
+            letter-spacing: 1px;
+          }
+          .arrow {
+            svg {
+              transition: all 0.2s ease-in-out;
+            }
+            &.collapse_open {
+              svg {
+                transform: rotate(90deg);
+              }
+            }
+          }
+        }
+      }
+
+      .submit_btn {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        button {
+          font-weight: 500;
+          outline: none;
+          border: 5px solid $mainColor;
+          background-color: transparent;
+          color: white;
+
+          &:hover {
+            border-color: $mainColorHover;
+            background-color: $mainColorHover;
+            color: rgba($mainBgColor, 1);
+          }
+        }
+        button[type="submit"] {
+          background-color: $mainColor;
+          color: rgba($mainBgColor, 1);
+
+          &:hover {
+            border-color: $mainColorHover;
+            background-color: $mainColorHover;
+          }
+          &:disabled {
+            border-color: $mainColorHover;
+            background-color: $mainColorHover;
+          }
+        }
+        & > a {
+          margin-top: 2rem;
+          color: $secondColor;
+          font-size: 0.5rem;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+.mui_input_custom {
+  min-height: 80px;
+  width: 100%;
+
+  label {
+    font-size: 1.25rem;
+    font-family: $mainFontFamily;
+    letter-spacing: 1px;
+    color: $mainColor;
+    &.Mui-focused {
+      color: $secondColor;
+    }
+  }
+  .MuiInputBase-root {
+    font-size: 1.25rem;
+    font-family: $mainFontFamily;
+    color: $secondColor;
+
+    &:hover:not(.Mui-disabled):before {
+      border-color: $secondColor;
+      border-width: 2px;
+    }
+
+    &::before {
+      border-color: $secondColor;
+      border-width: 2px;
+    }
+
+    &::after {
+      border-color: $mainColor;
+      border-width: 2px;
+    }
+    input {
+      &:-webkit-autofill,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:active {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: $secondColor !important;
+      }
+    }
+    .MuiInputAdornment-root {
+      svg {
+        color: white;
+        font-size: 1rem;
+        position: relative;
+        left: -5px;
+      }
+    }
+  }
+  .MuiFormHelperText-root {
+    font-family: $mainFontFamily;
+    color: red;
+  }
+}
