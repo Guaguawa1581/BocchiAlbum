@@ -1,8 +1,0 @@
-/node_modules
-npm-debug.log
-/.pnp
-.pnp.js
-
-# misc
-.env*
-.DS_Store
