@@ -10,7 +10,7 @@ const { userPassport } = require("../middleware/passport");
 const userController = require("../controller/userController");
 
 router.use((req, res, next) => {
-  // console.log("A request is coming in to userRoute!");
+  console.log("A request is coming in to userRoute!");
   next();
 });
 

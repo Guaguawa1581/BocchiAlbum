@@ -9,7 +9,7 @@ const { userPassport } = require("../middleware/passport");
 const imageController = require("../controller/imageController");
 
 router.use((req, res, next) => {
-  // console.log("A request is coming in to Image Router!");
+  console.log("A request is coming in to Image Router!");
   next();
 });
 

@@ -10,7 +10,7 @@ const { userPassport } = require("../middleware/passport");
 const cardController = require("../controller/cardController");
 
 router.use((req, res, next) => {
-  // console.log("A request is coming in to get Card Data~");
+  console.log("A request is coming in to get Card Data~");
   next();
 });
 router.post("/", userPassport, cardController.postData);
