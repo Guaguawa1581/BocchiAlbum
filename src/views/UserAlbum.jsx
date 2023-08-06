@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Masonry from "react-masonry-css";
 import { useSelector, useDispatch } from "react-redux";
 import { dataRefresh, stateLoading } from "../service/redux/actions";
@@ -62,23 +62,22 @@ const UserAlbum = () => {
   }, [currentPage]);
 
   // 監聽是否滑到底
-  const handleScroll = () => {
-    const isBottom =
-      window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight;
-    if (isBottom && !loading) {
-      setCurrentPage((prevPage) => prevPage + 1); // 滾動到底部時，將頁數增加 1，觸發載入更多資料
-    }
-  };
   useEffect(() => {
+    const handleScroll = () => {
+      const isBottom =
+        window.innerHeight + document.documentElement.scrollTop ===
+        document.documentElement.offsetHeight;
+      if (isBottom && !loading) {
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+    };
     if (!isEndPage) {
       window.addEventListener("scroll", handleScroll);
     }
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-    // 監聽 loading 的變化，避免在載入資料時重複觸發載入事件
-  }, [loading]);
+  }, [loading, isEndPage]);
 
   // 從redux中提取user資料
   const userInfo = useSelector((state) => state.user);
@@ -134,22 +133,29 @@ const UserAlbum = () => {
     }
   };
   // redux 重整
-  const refreshPage = async (needsRefresh) => {
-    if (needsRefresh) {
-      if (currentPage === 1) {
-        await getDataAlbum(1);
-      } else {
-        setCurrentPage(1);
+  const refreshPage = useCallback(
+    async (needsRefresh) => {
+      if (needsRefresh) {
+        if (currentPage === 1) {
+          await getDataAlbum(1);
+        } else {
+          setCurrentPage(1);
+        }
+        setIsEndPage(false);
+        window.scrollTo(0, 0);
+        dispatch(dataRefresh(false));
       }
-      setIsEndPage(false);
-      window.scrollTo(0, 0);
-      dispatch(dataRefresh(false));
-    }
-  };
+    },
+    [currentPage, setCurrentPage, setIsEndPage, dispatch]
+  );
+
   const reduxDataOperation = useSelector((state) => state.data);
+  const needsRefresh = reduxDataOperation.needsRefresh;
+
+  // 使用 useEffect 觸發 refreshPage 函式
   useEffect(() => {
-    refreshPage(reduxDataOperation.needsRefresh);
-  }, [reduxDataOperation]);
+    refreshPage(needsRefresh);
+  }, [needsRefresh, refreshPage]);
 
   return (
     <>

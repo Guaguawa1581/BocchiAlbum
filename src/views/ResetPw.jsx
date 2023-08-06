@@ -24,24 +24,24 @@ const ResetPw = () => {
   const { resetToken } = useParams();
   const [tempUser, setTempUser] = useState(null);
 
-  const checkToken = async (token) => {
-    setTempUser(null);
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/user/resetPassword/${resetToken}`
-      );
-      if (res.data.success) {
-        setTempUser(res.data.user);
-      } else {
-        setTempUser(null);
-        message.error("Token invalid.");
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      message.error(`Error: ${err.response.data.message}`);
-    }
-  };
   useEffect(() => {
+    const checkToken = async (token) => {
+      setTempUser(null);
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/user/resetPassword/${resetToken}`
+        );
+        if (res.data.success) {
+          setTempUser(res.data.user);
+        } else {
+          setTempUser(null);
+          message.error("Token invalid.");
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        message.error(`Error: ${err.response.data.message}`);
+      }
+    };
     checkToken(resetToken);
   }, [resetToken]);
 

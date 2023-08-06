@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Masonry from "react-masonry-css";
 import axios from "axios";
 import { message } from "antd";
@@ -57,44 +57,49 @@ const HomePage = () => {
     }
   }, [currentPage]);
 
-  // 監聽是否滑到底
-  const handleScroll = () => {
-    const isBottom =
-      window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight;
-    if (isBottom && !loading) {
-      setCurrentPage((prevPage) => prevPage + 1); // 滾動到底部時，將頁數增加 1，觸發載入更多資料
-    }
-  };
   useEffect(() => {
+    // 監聽是否滑到底
+    const handleScroll = () => {
+      const isBottom =
+        window.innerHeight + document.documentElement.scrollTop ===
+        document.documentElement.offsetHeight;
+      if (isBottom && !loading) {
+        setCurrentPage((prevPage) => prevPage + 1); // 滾動到底部時，將頁數增加 1，觸發載入更多資料
+      }
+    };
     if (!isEndPage) {
       window.addEventListener("scroll", handleScroll);
     }
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [loading]);
+  }, [loading, isEndPage]);
   // 監聽 loading 的變化，避免在載入資料時重複觸發載入事件
 
-  // redux 重整
-  const refreshPage = async (needsRefresh) => {
-    if (needsRefresh) {
-      if (currentPage === 1) {
-        await getData(1);
-      } else {
-        setCurrentPage(1);
+  // 使用 useCallback 確保 refreshPage 函式不會在每次渲染時都重新創建
+  const refreshPage = useCallback(
+    async (needsRefresh) => {
+      if (needsRefresh) {
+        if (currentPage === 1) {
+          await getData(1);
+        } else {
+          setCurrentPage(1);
+        }
+        setIsEndPage(false);
+        window.scrollTo(0, 0);
+        dispatch(dataRefresh(false));
       }
-      setIsEndPage(false);
+    },
+    [currentPage, setCurrentPage, setIsEndPage, dispatch]
+  );
 
-      window.scrollTo(0, 0);
-
-      dispatch(dataRefresh(false));
-    }
-  };
   const reduxDataOperation = useSelector((state) => state.data);
+  const needsRefresh = reduxDataOperation.needsRefresh;
+
+  // 使用 useEffect 觸發 refreshPage 函式
   useEffect(() => {
-    refreshPage(reduxDataOperation.needsRefresh);
-  }, [reduxDataOperation]);
+    refreshPage(needsRefresh);
+  }, [needsRefresh, refreshPage]);
 
   return (
     <div id="home_page">

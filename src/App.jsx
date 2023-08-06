@@ -39,22 +39,23 @@ function App() {
   const dispatch = useDispatch();
 
   // 使用cookie token取得用戶資料
-  const checkToken = async () => {
-    try {
-      const bocchiToken = Cookies.get("bocchi");
-      axios.defaults.headers.common["Authorization"] = bocchiToken;
-      const checkRes = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/user/check`
-      );
-      dispatch(userLoginAction(checkRes.data.user));
-    } catch (err) {
-      dispatch(userLogout());
-      console.log(err);
-    }
-  };
+
   useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const bocchiToken = Cookies.get("bocchi");
+        axios.defaults.headers.common["Authorization"] = bocchiToken;
+        const checkRes = await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/user/check`
+        );
+        dispatch(userLoginAction(checkRes.data.user));
+      } catch (err) {
+        dispatch(userLogout());
+        console.log(err);
+      }
+    };
     checkToken();
-  }, []);
+  }, [dispatch]);
 
   // 從redux中提取user資料
   const userInfo = useSelector((state) => state.user);

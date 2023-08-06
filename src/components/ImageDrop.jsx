@@ -13,11 +13,14 @@ const ProfilePictureUpload = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   //讓geterror可以是選填的
-  const handleGetError = (error) => {
-    if (getError) {
-      getError(error);
-    }
-  };
+  const handleGetError = useCallback(
+    (error) => {
+      if (getError) {
+        getError(error);
+      }
+    },
+    [getError]
+  );
 
   // 確保內外圖片一致
   useEffect(() => {
@@ -34,9 +37,11 @@ const ProfilePictureUpload = ({
     }
 
     return new Promise((resolve, reject) => {
-      const compressor = new Compressor(file, {
+      // eslint-disable-next-line no-unused-vars
+      const compressored = new Compressor(file, {
         quality: 0.6,
         success(result) {
+          // 壓縮完成後再進行 resolve
           resolve(result);
         },
         error(err) {
@@ -123,7 +128,7 @@ const ProfilePictureUpload = ({
       };
       reader.readAsDataURL(oldFile);
     },
-    [compressImg, props.type]
+    [compressImg, props.type, getFile, handleGetError]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
