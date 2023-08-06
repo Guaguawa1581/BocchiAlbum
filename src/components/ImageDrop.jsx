@@ -31,24 +31,28 @@ const ProfilePictureUpload = ({
   }, [errorHint]);
 
   // 壓縮圖片
-  const compressImg = useCallback((file) => {
+  const compressImg = useCallback(async (file) => {
     if (file.type === "image/gif") {
-      return file;
+      return file; // 因為 GIF 格式不壓縮，直接回傳原始檔案
     }
 
-    return new Promise((resolve, reject) => {
-      // eslint-disable-next-line no-unused-vars
-      const compressored = new Compressor(file, {
-        quality: 0.6,
-        success(result) {
-          // 壓縮完成後再進行 resolve
-          resolve(result);
-        },
-        error(err) {
-          reject(err);
-        }
+    try {
+      const result = await new Promise((resolve, reject) => {
+        new Compressor(file, {
+          quality: 0.6,
+          success(result) {
+            resolve(result);
+          },
+          error(err) {
+            reject(err);
+          }
+        });
       });
-    });
+
+      return result; // 壓縮完成後回傳壓縮後的結果
+    } catch (err) {
+      throw err; // 若有錯誤則拋出例外
+    }
   }, []);
 
   const onDrop = useCallback(

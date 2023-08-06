@@ -40,7 +40,6 @@ const UserAlbum = () => {
         setLoading(false);
       }
     } catch (err) {
-      console.error(err);
       setLoading(false);
       setIsEndPage(true);
       if (err.response.status === 404) {
@@ -119,7 +118,6 @@ const UserAlbum = () => {
       }
     } catch (err) {
       dispatch(stateLoading(false));
-      console.error(err);
       if (err.response.status === 404) {
         message.error(`Error: ${err.message}`, 5);
         return;

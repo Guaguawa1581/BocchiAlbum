@@ -62,7 +62,6 @@ const UserRegister = () => {
       // "imgUrl": "..."}
       return res.data.imgUrl;
     } catch (error) {
-      console.error(error);
       return error;
     }
   };
@@ -106,7 +105,7 @@ const UserRegister = () => {
       }
     } catch (err) {
       // 處理錯誤，可以在此處顯示錯誤訊息或進行其他處理
-      console.error("Error:", err);
+
       message.error(`Register failed: ${err.response.data.message}`);
     }
   };

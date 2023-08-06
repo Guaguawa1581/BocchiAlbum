@@ -48,7 +48,7 @@ const ForgetPw = () => {
       }
     } catch (err) {
       dispatch(stateLoading(false));
-      console.error("Error:", err);
+
       message.error(`Error: ${err.response.data.message}`);
     }
   };

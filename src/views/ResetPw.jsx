@@ -38,7 +38,6 @@ const ResetPw = () => {
           message.error("Token invalid.");
         }
       } catch (err) {
-        console.error("Error:", err);
         message.error(`Error: ${err.response.data.message}`);
       }
     };

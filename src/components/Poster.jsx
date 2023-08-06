@@ -104,7 +104,6 @@ const Poster = () => {
         return;
       }
     } catch (err) {
-      console.error(err);
       dispatch(stateLoading(false));
       if (err.response.status === 404) {
         message.error(`Posted failed: ${err.message}`, 5);

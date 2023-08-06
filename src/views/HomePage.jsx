@@ -36,7 +36,6 @@ const HomePage = () => {
         setLoading(false);
       }
     } catch (err) {
-      console.error(err);
       setLoading(false);
       setIsEndPage(true);
       if (err.response && err.response.status === 404) {
