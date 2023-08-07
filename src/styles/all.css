@@ -242,7 +242,7 @@
 .register_page .box .form_box .submit_btn > a {
   margin-top: 2rem;
   color: rgb(255, 255, 255);
-  font-size: 0.5rem;
+  font-size: 1rem;
   text-decoration: underline;
 }
 

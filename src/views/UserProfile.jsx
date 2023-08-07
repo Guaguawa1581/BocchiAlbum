@@ -11,7 +11,7 @@ import { Collapse } from "react-bootstrap"; // 引入 react-bootstrap 中的 Col
 import { ArrowForwardIos as ArrowForwardIosIcon } from "@mui/icons-material";
 import InputField from "../components/InputField";
 import ImageDrop from "../components/ImageDrop";
-import { userLogout } from "../service/redux/actions";
+import { userLogout, stateLoading } from "../service/redux/actions";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -117,6 +117,7 @@ const UserProfile = () => {
   };
 
   const submitHandler = async (data) => {
+    dispatch(stateLoading(true));
     let formData = {};
     let avatarUrl;
     if (newAvatarFile) {
@@ -137,6 +138,7 @@ const UserProfile = () => {
     }
 
     const updateRes = await updateProfile(formData);
+    dispatch(stateLoading(false));
     if (updateRes.success && isNewPassword) {
       dispatch(userLogout());
       Cookies.remove("bocchi");
@@ -146,7 +148,7 @@ const UserProfile = () => {
       message.success(updateRes.message, 5);
       setTimeout(() => {
         window.location.reload();
-      }, 1000);
+      }, 500);
     } else {
       message.error(updateRes.message);
     }
