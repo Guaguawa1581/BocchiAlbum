@@ -140,7 +140,8 @@ const ProfilePictureUpload = ({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".gif"]
     },
-    maxSize: 10 * 1024 * 1024
+    maxSize: 10 * 1024 * 1024,
+    multiple: false
   });
 
   return (
