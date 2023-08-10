@@ -13,6 +13,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { yellow } from "@mui/material/colors";
 import InputField from "./InputField";
 import ImageDrop from "./ImageDrop";
+import uploadImg from "../service/uploadImg.js";
 
 ReactModal.setAppElement("#root");
 
@@ -45,27 +46,6 @@ const Poster = () => {
     }
   };
 
-  // API
-  const uploadImg = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
-      return res.data.imgUrl;
-    } catch (error) {
-      message.error(error.response.data.error);
-      return;
-    }
-  };
-
   // form 相關
   const postValidate = yup.object({
     title: yup
@@ -85,11 +65,14 @@ const Poster = () => {
       } else {
         setIsPostImgErr(false);
       }
-      const imgUrl = await uploadImg(postImgFile);
+      const imgRes = await uploadImg(postImgFile);
+      if (!imgRes.success) {
+        throw new Error(imgRes.message);
+      }
       const formData = {
         title: values.title,
         is_public: values.is_public ? 1 : 0,
-        image_url: imgUrl
+        image_url: imgRes.url
       };
 
       const postRes = await axios.post(
@@ -105,12 +88,15 @@ const Poster = () => {
       }
     } catch (err) {
       dispatch(stateLoading(false));
-      if (err.response.status === 404) {
+
+      if (err instanceof Error) {
+        message.error(`Posted failed: ${err.message}`, 5);
+      } else if (err.response.status === 404) {
         message.error(`Posted failed: ${err.message}`, 5);
       } else {
         message.error(
           `Posted failed: ${
-            err.response.data.message || err.response.statusText
+            err.response.data.message || err.response.statusText || err.message
           }`,
           5
         );

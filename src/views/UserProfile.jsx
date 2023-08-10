@@ -12,6 +12,7 @@ import { ArrowForwardIos as ArrowForwardIosIcon } from "@mui/icons-material";
 import InputField from "../components/InputField";
 import ImageDrop from "../components/ImageDrop";
 import { userLogout, stateLoading } from "../service/redux/actions";
+import uploadImg from "../service/uploadImg";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ const UserProfile = () => {
   // 頭貼處理
   const [avatarImg, setAvatarImg] = useState(null);
   const [newAvatarFile, setNewAvatarFile] = useState(null);
+  const [avatarErr, setAvatarErr] = useState(false);
   // 在外部使用 useCallback 優化回調函數
   const imgHandler = useCallback(
     (data) => {
@@ -55,34 +57,12 @@ const UserProfile = () => {
         setIsDataChanged(true);
         setAvatarImg(URL.createObjectURL(data));
         setNewAvatarFile(data);
+        setAvatarErr(false);
       }
     },
     [setIsDataChanged]
   );
-  // API
-  const uploadImg = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
 
-      //{ "success": true,
-      // "message": "圖片上傳成功",
-      // "imgUrl": "..."}
-      return res.data.imgUrl;
-    } catch (error) {
-      message.error(error.response.data.error);
-      return;
-    }
-  };
   const updateProfile = async (profile) => {
     try {
       const res = await axios.put(
@@ -121,7 +101,15 @@ const UserProfile = () => {
     let formData = {};
     let avatarUrl;
     if (newAvatarFile) {
-      avatarUrl = await uploadImg(newAvatarFile);
+      const imgRes = await uploadImg(newAvatarFile);
+      if (!imgRes.success) {
+        dispatch(stateLoading(false));
+        setAvatarErr(true);
+        message.error(imgRes.message);
+        return;
+      } else {
+        avatarUrl = imgRes.url;
+      }
     }
     if (isNewPassword) {
       formData = {
@@ -173,6 +161,7 @@ const UserProfile = () => {
                 avatarImg || (userInfo.userData && userInfo.userData.avatar)
               }
               getFile={imgHandler}
+              errorHint={avatarErr}
             />
           </div>
           {userInfo.userData && (

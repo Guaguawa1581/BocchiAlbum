@@ -8,6 +8,7 @@ import axios from "axios";
 import InputField from "../components/InputField";
 import ImageDrop from "../components/ImageDrop";
 import userLoginFn from "../service/userLoginFn";
+import uploadImg from "../service/uploadImg";
 
 // yup驗證套件
 const validate = yup.object({
@@ -38,39 +39,24 @@ const UserRegister = () => {
   // Image handle
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarErr, setAvatarErr] = useState(false);
   const imgHandler = (data) => {
     setAvatarUrl(URL.createObjectURL(data));
     setAvatarFile(data);
-  };
-  const uploadImg = async (file) => {
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/image`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
-
-      //{ "success": true,
-      // "message": "圖片上傳成功",
-      // "imgUrl": "..."}
-      return res.data.imgUrl;
-    } catch (error) {
-      return error;
-    }
   };
 
   const registerHandler = async (data) => {
     try {
       let avatarUrl;
       if (avatarFile) {
-        avatarUrl = await uploadImg(avatarFile);
+        const imgRes = await uploadImg(avatarFile);
+        if (!imgRes.success) {
+          setAvatarErr(true);
+          throw new Error(imgRes.message);
+        } else {
+          setAvatarErr(false);
+          avatarUrl = imgRes.url;
+        }
       }
 
       const formData = {
@@ -105,7 +91,10 @@ const UserRegister = () => {
       }
     } catch (err) {
       // 處理錯誤，可以在此處顯示錯誤訊息或進行其他處理
-
+      if (err instanceof Error) {
+        message.error(`Posted failed: ${err.message}`, 5);
+        return;
+      }
       message.error(`Register failed: ${err.response.data.message}`);
     }
   };
@@ -121,6 +110,7 @@ const UserRegister = () => {
               label="AVATAR"
               imgSrc={avatarUrl}
               getFile={imgHandler}
+              errorHint={avatarErr}
             />
           </div>
           <Formik
