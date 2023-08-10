@@ -59,9 +59,15 @@ const HomePage = () => {
   useEffect(() => {
     // 監聽是否滑到底
     const handleScroll = () => {
+      console.log(
+        window.innerHeight,
+        window.pageYOffset,
+        document.body.offsetHeight
+      );
       const isBottom =
-        window.innerHeight + document.documentElement.scrollTop ===
-        document.documentElement.offsetHeight;
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 50;
+
       if (isBottom && !loading) {
         setCurrentPage((prevPage) => prevPage + 1); // 滾動到底部時，將頁數增加 1，觸發載入更多資料
       }
