@@ -59,11 +59,6 @@ const HomePage = () => {
   useEffect(() => {
     // 監聽是否滑到底
     const handleScroll = () => {
-      console.log(
-        window.innerHeight,
-        window.pageYOffset,
-        document.body.offsetHeight
-      );
       const isBottom =
         window.innerHeight + document.documentElement.scrollTop >=
         document.documentElement.offsetHeight - 50;
