@@ -63,6 +63,7 @@ const UserRegister = () => {
         ...data,
         avatar: avatarUrl || ""
       };
+      console.log("dddddata", formData);
 
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/user`,

@@ -38,14 +38,22 @@ const HomePage = () => {
     } catch (err) {
       setLoading(false);
       setIsEndPage(true);
-      if (err.response && err.response.status === 404) {
-        message.error(`Error: ${err.message}`, 5);
+      if (err.response) {
+        if (err.response.status == 404) {
+          message.error(`Error: ${err.message}`, 5);
+        } else {
+          message.warning(
+            `Error: ${err.response.data.message || err.response.statusText}`,
+            5
+          );
+        }
       } else {
         message.warning(
-          `Error: ${err.response.data.message || err.response.statusText}`,
+          `Error: ${err.message}`,
           5
         );
       }
+
     }
   };
   useEffect(() => {
