@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
@@ -49,6 +49,10 @@ const UserProfile = () => {
   const [avatarImg, setAvatarImg] = useState(null);
   const [newAvatarFile, setNewAvatarFile] = useState(null);
   const [avatarErr, setAvatarErr] = useState(false);
+
+  useEffect(() => {
+    setAvatarImg(userInfo.userData.avatar);
+  }, [userInfo]);
   // 在外部使用 useCallback 優化回調函數
   const imgHandler = useCallback(
     (data) => {
@@ -110,6 +114,11 @@ const UserProfile = () => {
       } else {
         avatarUrl = imgRes.url;
       }
+    } else {
+      const oldAvatar = userInfo.userData.avatar;
+      if (oldAvatar) {
+        avatarUrl = oldAvatar;
+      }
     }
     if (isNewPassword) {
       formData = {
@@ -158,7 +167,7 @@ const UserProfile = () => {
               type="avatar"
               label="AVATAR"
               imgSrc={
-                avatarImg || (userInfo.userData && userInfo.userData.avatar)
+                avatarImg
               }
               getFile={imgHandler}
               errorHint={avatarErr}
@@ -185,9 +194,8 @@ const UserProfile = () => {
                 <div className="change_pwd_btn">
                   <div onClick={togglePassword}>
                     <div
-                      className={`arrow ${
-                        isNewPassword ? "collapse_open" : ""
-                      }`}
+                      className={`arrow ${isNewPassword ? "collapse_open" : ""
+                        }`}
                     >
                       <span>
                         <ArrowForwardIosIcon fontSize="small" />

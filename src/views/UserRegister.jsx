@@ -69,6 +69,7 @@ const UserRegister = () => {
         `${process.env.REACT_APP_API_URL}/api/user`,
         formData
       );
+      console.log(res);
       if (res.data.success) {
         const loginData = {
           email: data.email,
