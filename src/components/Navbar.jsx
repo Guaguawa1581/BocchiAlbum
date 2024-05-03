@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsDataNeedRefresh, selectUserInfo } from "../service/globalData";
@@ -9,9 +9,6 @@ import AvatarPop from "./AvatarPop";
 const HomeNavbar = ({ location }) => {
   const dispatch = useDispatch();
   const UserInfo = useSelector(selectUserInfo);
-  useEffect(() => {
-    console.log(UserInfo);
-  }, []);
   const reloadHome = () => {
     if (location.pathname === "/") {
       dispatch(setIsDataNeedRefresh(true));

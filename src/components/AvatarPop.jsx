@@ -47,7 +47,7 @@ const AvatarPop = ({ imgSize, ...props }) => {
         <div>
           <div>
             <img
-              src={userData.avatar == "" ? tsuchiAvatar : userData.avatar}
+              src={userData.avatar === "" ? tsuchiAvatar : userData.avatar}
               alt=""
             />
           </div>
@@ -112,7 +112,7 @@ const AvatarPop = ({ imgSize, ...props }) => {
           onOpenChange={handlePopoverToggle}
         >
           <Avatar
-            src={userData.avatar == "" ? tsuchiAvatar : userData.avatar}
+            src={userData.avatar === "" ? tsuchiAvatar : userData.avatar}
             alt="Avatar"
             size={imgSize}
             onClick={handlePopoverToggle}

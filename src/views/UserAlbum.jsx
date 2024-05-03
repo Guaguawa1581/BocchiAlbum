@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useCallback } from "react";
 import Masonry from "react-masonry-css";
 import { useSelector, useDispatch } from "react-redux";

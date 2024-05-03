@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback } from "react";
 import Masonry from "react-masonry-css";
 import axios from "axios";
@@ -43,7 +44,7 @@ const HomePage = () => {
       setLoading(false);
       setIsEndPage(true);
       if (err.response) {
-        if (err.response.status == 404) {
+        if (err.response.status === 404) {
           message.error(`Error: ${err.message}`, 5);
         } else {
           message.warning(
