@@ -1,10 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-
-import {
-  userLogin as loginAction,
-  userLogout as logoutAction
-} from "./redux/actions";
+import { setUserInfo } from "./globalData";
 
 const userLoginFn = async (userData, dispatch) => {
   try {
@@ -19,7 +15,8 @@ const userLoginFn = async (userData, dispatch) => {
       document.cookie = `bocchi=${token}; expires=${expirationDate};path=/;`;
       axios.defaults.headers.common["Authorization"] = token;
       // redux dispatch
-      dispatch(loginAction(res.data.user));
+      console.log(res.data.user);
+      dispatch(setUserInfo(res.data.user));
       return {
         success: res.data.success,
         message: res.data.message
@@ -28,7 +25,7 @@ const userLoginFn = async (userData, dispatch) => {
   } catch (error) {
     if (error.response) {
       Cookies.remove("bocchi");
-      dispatch(logoutAction());
+      dispatch(setUserInfo(null));
       return {
         success: error.response.data.success,
         message: error.response.data.message

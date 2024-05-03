@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Masonry from "react-masonry-css";
 import { useSelector, useDispatch } from "react-redux";
-import { dataRefresh, stateLoading } from "../service/redux/actions";
+import {
+  setIsLoading,
+  setIsDataNeedRefresh,
+  selectIsLoading,
+  selectUserInfo,
+  selectIsDataNeedRefresh
+} from "../service/globalData";
 import { message, Modal } from "antd";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import axios from "axios";
@@ -18,15 +24,16 @@ const UserAlbum = () => {
     992: 2,
     768: 1
   };
-
   // data
+  const IsLoading = useSelector(selectIsLoading);
+  const UserInfo = useSelector(selectUserInfo);
+  const IsDataNeedRefresh = useSelector(selectIsDataNeedRefresh);
   const [dataList, setDataList] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isEndPage, setIsEndPage] = useState(null);
   const getDataAlbum = async (page) => {
     try {
-      setLoading(true);
+      dispatch(setIsLoading(true));
       const res = await axios.get(
         `${process.env.REACT_APP_API_URL}/api/card/album?page=${page}&limit=20`,
         { headers: { Authorization: Cookies.get("bocchi") } }
@@ -34,13 +41,13 @@ const UserAlbum = () => {
 
       if (res.data.success && page === 1) {
         setDataList(res.data.cardData);
-        setLoading(false);
+        dispatch(setIsLoading(false));
       } else if (res.data.success && page > 1) {
         setDataList((prevDataList) => [...prevDataList, ...res.data.cardData]);
-        setLoading(false);
+        dispatch(setIsLoading(false));
       }
     } catch (err) {
-      setLoading(false);
+      dispatch(setIsLoading(false));
       setIsEndPage(true);
       if (err.response.status === 404) {
         message.error(`Error: ${err.message}`, 5);
@@ -66,7 +73,7 @@ const UserAlbum = () => {
       const isBottom =
         window.innerHeight + document.documentElement.scrollTop ===
         document.documentElement.offsetHeight;
-      if (isBottom && !loading) {
+      if (isBottom && !IsLoading) {
         setCurrentPage((prevPage) => prevPage + 1);
       }
     };
@@ -76,10 +83,7 @@ const UserAlbum = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [loading, isEndPage]);
-
-  // 從redux中提取user資料
-  const userInfo = useSelector((state) => state.user);
+  }, [IsLoading, isEndPage]);
 
   // del card
   const [delModelOpen, setDelModelOpen] = useState(false);
@@ -93,7 +97,7 @@ const UserAlbum = () => {
     setDelModelOpen(false);
   };
   const handleDeleteCard = async (cardData) => {
-    await delData(cardData.card_id);
+    await delData(cardData);
     // 更新list
     const updatedList = dataList.filter(
       (card) => card.card_id !== cardData.card_id
@@ -102,14 +106,17 @@ const UserAlbum = () => {
     setTempCard(null);
     setDelModelOpen(false);
   };
-  const delData = async (id) => {
+  const delData = async (data) => {
     try {
-      dispatch(stateLoading(true));
+      const { card_id, public_id } = data;
+      const encodedPublicId = encodeURIComponent(public_id);
+      console.log("eeeee", encodedPublicId);
+      dispatch(setIsLoading(true));
       const res = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/card/card_id=${id}`
+        `${process.env.REACT_APP_API_URL}/api/card?card_id=${card_id}&public_id=${encodedPublicId}`
       );
 
-      dispatch(stateLoading(false));
+      dispatch(setIsLoading(false));
       if (res.data.success) {
         message.success("Deleted card successfully", 3);
       } else {
@@ -117,7 +124,7 @@ const UserAlbum = () => {
         return;
       }
     } catch (err) {
-      dispatch(stateLoading(false));
+      dispatch(setIsLoading(false));
       if (err.response.status === 404) {
         message.error(`Error: ${err.message}`, 5);
         return;
@@ -131,35 +138,29 @@ const UserAlbum = () => {
     }
   };
   // redux 重整
-  const refreshPage = useCallback(
-    async (needsRefresh) => {
-      if (needsRefresh) {
-        if (currentPage === 1) {
-          await getDataAlbum(1);
-        } else {
-          setCurrentPage(1);
-        }
-        setIsEndPage(false);
-        window.scrollTo(0, 0);
-        dispatch(dataRefresh(false));
-      }
-    },
-    [currentPage, setCurrentPage, setIsEndPage, dispatch]
-  );
-
-  const reduxDataOperation = useSelector((state) => state.data);
-  const needsRefresh = reduxDataOperation.needsRefresh;
+  const refreshPage = useCallback(async () => {
+    if (currentPage === 1) {
+      await getDataAlbum(1);
+    } else {
+      setCurrentPage(1);
+    }
+    setIsEndPage(false);
+    window.scrollTo(0, 0);
+    dispatch(setIsDataNeedRefresh(false));
+  }, [currentPage, setCurrentPage, setIsEndPage, getDataAlbum, dispatch]);
 
   // 使用 useEffect 觸發 refreshPage 函式
   useEffect(() => {
-    refreshPage(needsRefresh);
-  }, [needsRefresh, refreshPage]);
+    if (IsDataNeedRefresh) {
+      refreshPage();
+    }
+  }, [IsDataNeedRefresh]);
 
   return (
     <>
       <div id="album_page">
         <div className="page_banner bg-danger text-white">
-          This is {userInfo.userData && userInfo.userData.username} Album
+          This is {UserInfo && UserInfo.username} Album
         </div>
         {dataList.length === 0 && (
           <div className="pt-4 fs-2 fw-bold text-center">
@@ -182,8 +183,8 @@ const UserAlbum = () => {
                 />
               ))}
           </Masonry>
-          {loading && <div>Loading more...</div>}
-          {!loading && isEndPage && dataList.length >= 20 && (
+          {IsLoading && <div>Loading more...</div>}
+          {!IsLoading && isEndPage && dataList.length >= 20 && (
             <div className="end_card">
               <h1>This is END</h1>
               <div className="img_box">

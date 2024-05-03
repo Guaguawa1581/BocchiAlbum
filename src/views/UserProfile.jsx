@@ -11,13 +11,17 @@ import { Collapse } from "react-bootstrap"; // 引入 react-bootstrap 中的 Col
 import { ArrowForwardIos as ArrowForwardIosIcon } from "@mui/icons-material";
 import InputField from "../components/InputField";
 import ImageDrop from "../components/ImageDrop";
-import { userLogout, stateLoading } from "../service/redux/actions";
+import {
+  setUserInfo,
+  setIsLoading,
+  selectUserInfo
+} from "../service/globalData";
 import uploadImg from "../service/uploadImg";
 
 const UserProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userInfo = useSelector((state) => state.user);
+  const UserInfo = useSelector(selectUserInfo);
 
   // 是否更改密碼
   const [isNewPassword, setIsNewPassword] = useState(false);
@@ -51,8 +55,10 @@ const UserProfile = () => {
   const [avatarErr, setAvatarErr] = useState(false);
 
   useEffect(() => {
-    setAvatarImg(userInfo.userData.avatar);
-  }, [userInfo]);
+    if (UserInfo) {
+      setAvatarImg(UserInfo.avatar);
+    }
+  }, [UserInfo]);
   // 在外部使用 useCallback 優化回調函數
   const imgHandler = useCallback(
     (data) => {
@@ -101,13 +107,13 @@ const UserProfile = () => {
   };
 
   const submitHandler = async (data) => {
-    dispatch(stateLoading(true));
+    dispatch(setIsLoading(true));
     let formData = {};
     let avatarUrl;
     if (newAvatarFile) {
-      const imgRes = await uploadImg(newAvatarFile);
+      const imgRes = await uploadImg(newAvatarFile, true);
       if (!imgRes.success) {
-        dispatch(stateLoading(false));
+        dispatch(setIsLoading(false));
         setAvatarErr(true);
         message.error(imgRes.message);
         return;
@@ -115,7 +121,7 @@ const UserProfile = () => {
         avatarUrl = imgRes.url;
       }
     } else {
-      const oldAvatar = userInfo.userData.avatar;
+      const oldAvatar = UserInfo.avatar;
       if (oldAvatar) {
         avatarUrl = oldAvatar;
       }
@@ -135,9 +141,9 @@ const UserProfile = () => {
     }
 
     const updateRes = await updateProfile(formData);
-    dispatch(stateLoading(false));
+    dispatch(setIsLoading(false));
     if (updateRes.success && isNewPassword) {
-      dispatch(userLogout());
+      dispatch(setUserInfo(null));
       Cookies.remove("bocchi");
       message.success(updateRes.message, 5);
       navigate("/login");
@@ -152,7 +158,7 @@ const UserProfile = () => {
   };
 
   const resetAll = () => {
-    setAvatarImg(userInfo.userData.avatar);
+    setAvatarImg(UserInfo.avatar);
     setNewAvatarFile(null);
     setIsDataChanged(false);
   };
@@ -166,17 +172,15 @@ const UserProfile = () => {
             <ImageDrop
               type="avatar"
               label="AVATAR"
-              imgSrc={
-                avatarImg
-              }
+              imgSrc={avatarImg}
               getFile={imgHandler}
               errorHint={avatarErr}
             />
           </div>
-          {userInfo.userData && (
+          {UserInfo && (
             <Formik
               initialValues={{
-                username: userInfo.userData.username
+                username: UserInfo.username
               }}
               validationSchema={validate}
               onSubmit={submitHandler}
@@ -194,8 +198,9 @@ const UserProfile = () => {
                 <div className="change_pwd_btn">
                   <div onClick={togglePassword}>
                     <div
-                      className={`arrow ${isNewPassword ? "collapse_open" : ""
-                        }`}
+                      className={`arrow ${
+                        isNewPassword ? "collapse_open" : ""
+                      }`}
                     >
                       <span>
                         <ArrowForwardIosIcon fontSize="small" />

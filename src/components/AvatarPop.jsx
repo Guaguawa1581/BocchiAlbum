@@ -1,24 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Popover, Avatar, Modal } from "antd";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
-import { userLogout } from "../service/redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserInfo, setUserInfo } from "../service/globalData";
 import tsuchiAvatar from "../images/squareTsuchinokoGif.gif";
 
-const AvatarPop = ({ userData, imgSize, ...props }) => {
+const AvatarPop = ({ imgSize, ...props }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const UserInfo = useSelector(selectUserInfo);
+  const [userData, setUserData] = useState({
+    avatar: "",
+    username: "",
+    email: "",
+    user_id: ""
+  });
   const [isLogoutModal, setIsLogoutModal] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (UserInfo) {
+      setUserData(UserInfo);
+    }
+  }, [UserInfo]);
   // LOGOUT
   const logoutModal = () => {
     setIsLogoutModal(true);
   };
   const handleLogout = () => {
-    dispatch(userLogout());
+    dispatch(setUserInfo(null));
     Cookies.remove("bocchi");
     setIsLogoutModal(false);
     Modal.destroyAll();
@@ -34,7 +46,10 @@ const AvatarPop = ({ userData, imgSize, ...props }) => {
       <div className="avatar">
         <div>
           <div>
-            <img src={userData.avatar || tsuchiAvatar} alt="" />
+            <img
+              src={userData.avatar == "" ? tsuchiAvatar : userData.avatar}
+              alt=""
+            />
           </div>
         </div>
         {/* <ImageDrop
@@ -97,7 +112,7 @@ const AvatarPop = ({ userData, imgSize, ...props }) => {
           onOpenChange={handlePopoverToggle}
         >
           <Avatar
-            src={userData.avatar || tsuchiAvatar}
+            src={userData.avatar == "" ? tsuchiAvatar : userData.avatar}
             alt="Avatar"
             size={imgSize}
             onClick={handlePopoverToggle}

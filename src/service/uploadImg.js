@@ -1,20 +1,21 @@
 import axios from "axios";
-const uploadImg = async (file) => {
+const uploadImg = async (file, isProfile = false) => {
   const formData = new FormData();
   formData.append("image", file);
   try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/api/image`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
+    let postUrl = `${process.env.REACT_APP_API_URL}/api/image`;
+    if (isProfile) {
+      postUrl = `${process.env.REACT_APP_API_URL}/api/image/profile`;
+    }
+    const res = await axios.post(postUrl, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
       }
-    );
+    });
     return {
       success: true,
-      url: res.data.imgUrl
+      url: res.data.imgUrl,
+      public_id: res.data.public_id
     };
   } catch (error) {
     return {

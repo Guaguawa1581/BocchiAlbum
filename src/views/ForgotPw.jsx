@@ -5,9 +5,8 @@ import { Formik, Form } from "formik";
 import * as yup from "yup";
 import { useDispatch } from "react-redux";
 import { message } from "antd";
-
 import InputField from "../components/InputField";
-import { stateLoading } from "../service/redux/actions";
+import { setIsLoading } from "../service/globalData";
 
 // yup驗證套件
 const validate = yup.object({
@@ -24,19 +23,18 @@ const validate = yup.object({
 
 const ForgetPw = () => {
   const dispatch = useDispatch();
-
   const [successMsg, setSuccessMsg] = useState(null);
   const [errMsg, setErrMsg] = useState(null);
   const submitHandler = async (values) => {
     try {
-      dispatch(stateLoading(true));
+      dispatch(setIsLoading(true));
       const data = { email: values.email };
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/user/forgotPassword`,
         data
       );
 
-      dispatch(stateLoading(false));
+      dispatch(setIsLoading(false));
       if (res.data.success) {
         setErrMsg(null);
         setSuccessMsg(true);
@@ -47,8 +45,7 @@ const ForgetPw = () => {
         message.error(res.data.message);
       }
     } catch (err) {
-      dispatch(stateLoading(false));
-
+      dispatch(setIsLoading(false));
       message.error(`Error: ${err.response.data.message}`);
     }
   };

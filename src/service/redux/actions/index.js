@@ -1,5 +1,5 @@
 import { userLogin, userLogout } from "./userAction";
 import { dataRefresh } from "./dataAction";
-import { stateLoading } from "./loading";
+import { setLoading } from "./loading";
 
-export { userLogin, userLogout, dataRefresh, stateLoading };
+export { userLogin, userLogout, dataRefresh, setLoading };

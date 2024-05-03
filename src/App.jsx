@@ -6,9 +6,10 @@ import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import {
-  userLogin as userLoginAction,
-  userLogout
-} from "./service/redux/actions";
+  setUserInfo,
+  setIsCheckingLogin,
+  selectUserInfo
+} from "./service/globalData";
 // views
 import HomePage from "./views/HomePage";
 import UserLogin from "./views/UserLogin";
@@ -33,42 +34,46 @@ message.config({
 function App() {
   // 切換畫面會捲回頁首
   const location = useLocation();
+  const dispatch = useDispatch();
+  // 從redux中提取user資料
+  const UserInfo = useSelector(selectUserInfo);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
-  const dispatch = useDispatch();
 
   // 使用cookie token取得用戶資料
 
   useEffect(() => {
     const checkToken = async () => {
       try {
+        dispatch(setIsCheckingLogin(true));
         const bocchiToken = Cookies.get("bocchi");
         axios.defaults.headers.common["Authorization"] = bocchiToken;
         const checkRes = await axios.post(
           `${process.env.REACT_APP_API_URL}/api/user/check`
         );
-        dispatch(userLoginAction(checkRes.data.user));
+        console.log("cccccc", checkRes);
+        dispatch(setIsCheckingLogin(false));
+        dispatch(setUserInfo(checkRes.data.user));
       } catch (err) {
-        dispatch(userLogout());
+        dispatch(setIsCheckingLogin(false));
+        dispatch(setUserInfo(null));
         console.log(err);
       }
     };
     checkToken();
   }, [dispatch]);
 
-  // 從redux中提取user資料
-  const userInfo = useSelector((state) => state.user);
   //使否要顯示poster
-  const shouldDisplayPoster =
-    userInfo.userData &&
+  const isDisplayPoster =
+    UserInfo &&
     (location.pathname === "/" || location.pathname.startsWith("/album/"));
 
   return (
     <div className="all_views">
-      <Navbar userInfo={userInfo} location={location} />
+      <Navbar location={location} />
       <Loading />
-      {shouldDisplayPoster && <Poster />}
+      {isDisplayPoster && <Poster />}
       <div className="all_routes">
         <SwitchTransition>
           <CSSTransition
@@ -86,7 +91,7 @@ function App() {
               <Route path="/resetPassword/:resetToken" element={<ResetPw />} />
 
               {/* 需要驗證的路由 */}
-              <Route element={<PrivateRoute userInfo={userInfo} />}>
+              <Route element={<PrivateRoute userInfo={UserInfo} />}>
                 <Route path="/album/:id" element={<UserAlbum />} />
                 <Route path="/editProfile" element={<UserProfile />} />
               </Route>

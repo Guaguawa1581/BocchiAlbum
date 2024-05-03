@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setIsLoading } from "../service/globalData";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
 import { message } from "antd";
@@ -47,9 +48,10 @@ const UserRegister = () => {
 
   const registerHandler = async (data) => {
     try {
+      dispatch(setIsLoading(true));
       let avatarUrl;
       if (avatarFile) {
-        const imgRes = await uploadImg(avatarFile);
+        const imgRes = await uploadImg(avatarFile, true);
         if (!imgRes.success) {
           setAvatarErr(true);
           throw new Error(imgRes.message);
@@ -63,19 +65,20 @@ const UserRegister = () => {
         ...data,
         avatar: avatarUrl || ""
       };
-      console.log("dddddata", formData);
-
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/user`,
         formData
       );
       console.log(res);
+      dispatch(setIsLoading(false));
       if (res.data.success) {
         const loginData = {
           email: data.email,
           password: data.password
         };
+        dispatch(setIsLoading(true));
         const loginRes = await userLoginFn(loginData, dispatch);
+        dispatch(setIsLoading(false));
         if (loginRes.success) {
           message.success("Register new user and login successfully", 5);
           navigate("/");
@@ -92,7 +95,9 @@ const UserRegister = () => {
         message.error(`Register failed: ${res.data.message}`);
       }
     } catch (err) {
+      dispatch(setIsLoading(false));
       // 處理錯誤，可以在此處顯示錯誤訊息或進行其他處理
+      console.log(err);
       if (err instanceof Error) {
         message.error(`Posted failed: ${err.message}`, 5);
         return;

@@ -3,7 +3,10 @@ import Masonry from "react-masonry-css";
 import axios from "axios";
 import { message } from "antd";
 import { useSelector, useDispatch } from "react-redux";
-import { dataRefresh } from "../service/redux/actions";
+import {
+  setIsDataNeedRefresh,
+  selectIsDataNeedRefresh
+} from "../service/globalData";
 import ImageCard from "../components/ImageCard";
 import EndPic from "../images/cyberchosisBocchi.gif";
 const HomePage = () => {
@@ -16,6 +19,7 @@ const HomePage = () => {
     768: 1 // 螢幕寬度小於700px時，每行顯示1個圖片
   };
   // data
+  const IsDataNeedRefresh = useSelector(selectIsDataNeedRefresh);
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1); // 追蹤目前已經載入的頁數
@@ -48,12 +52,8 @@ const HomePage = () => {
           );
         }
       } else {
-        message.warning(
-          `Error: ${err.message}`,
-          5
-        );
+        message.warning(`Error: ${err.message}`, 5);
       }
-
     }
   };
   useEffect(() => {
@@ -86,28 +86,25 @@ const HomePage = () => {
 
   // 使用 useCallback 確保 refreshPage 函式不會在每次渲染時都重新創建
   const refreshPage = useCallback(
-    async (needsRefresh) => {
-      if (needsRefresh) {
-        if (currentPage === 1) {
-          await getData(1);
-        } else {
-          setCurrentPage(1);
-        }
-        setIsEndPage(false);
-        window.scrollTo(0, 0);
-        dispatch(dataRefresh(false));
+    async (page) => {
+      if (page === 1) {
+        await getData(1);
+      } else {
+        setCurrentPage(1);
       }
+      setIsEndPage(false);
+      window.scrollTo(0, 0);
+      dispatch(setIsDataNeedRefresh(false));
     },
-    [currentPage, setCurrentPage, setIsEndPage, dispatch]
+    [setCurrentPage, setIsEndPage, dispatch]
   );
-
-  const reduxDataOperation = useSelector((state) => state.data);
-  const needsRefresh = reduxDataOperation.needsRefresh;
 
   // 使用 useEffect 觸發 refreshPage 函式
   useEffect(() => {
-    refreshPage(needsRefresh);
-  }, [needsRefresh, refreshPage]);
+    if (IsDataNeedRefresh) {
+      refreshPage(currentPage);
+    }
+  }, [IsDataNeedRefresh, currentPage]);
 
   return (
     <div id="home_page">

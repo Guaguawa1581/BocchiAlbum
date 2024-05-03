@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-
-import { useDispatch } from "react-redux";
-import { dataRefresh } from "../service/redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsDataNeedRefresh, selectUserInfo } from "../service/globalData";
 // 預設大頭照
 
 import AvatarPop from "./AvatarPop";
 
-const HomeNavbar = ({ location, userInfo }) => {
+const HomeNavbar = ({ location }) => {
   const dispatch = useDispatch();
+  const UserInfo = useSelector(selectUserInfo);
+  useEffect(() => {
+    console.log(UserInfo);
+  }, []);
   const reloadHome = () => {
     if (location.pathname === "/") {
-      dispatch(dataRefresh(true));
+      dispatch(setIsDataNeedRefresh(true));
     }
   };
   return (
@@ -23,13 +26,12 @@ const HomeNavbar = ({ location, userInfo }) => {
               BOCCHI ALBUM!
             </Link>
           </div>
-          {/* 根据 isLoggedIn 的值进行条件渲染 */}
-          {userInfo.isLoggedIn ? (
+          {UserInfo != null ? (
             location.pathname.startsWith("/album/") ? (
               <>
                 <div className="nav_item">
                   <div className="me-2">
-                    <AvatarPop imgSize={40} userData={userInfo.userData} />
+                    <AvatarPop imgSize={40} />
                   </div>
                 </div>
               </>
@@ -38,12 +40,11 @@ const HomeNavbar = ({ location, userInfo }) => {
                 <div className="me-2">
                   <AvatarPop
                     imgSize={40}
-                    imgSrc={userInfo.userData.avatar}
-                    userData={userInfo.userData}
+                    imgSrc={UserInfo.avatar}
                     location={location}
                   />
                 </div>
-                <Link to={`/album/${userInfo.userData.user_id}`}>MyAlbum</Link>
+                <Link to={`/album/${UserInfo.user_id}`}>MyAlbum</Link>
               </div>
             )
           ) : (

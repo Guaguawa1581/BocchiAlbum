@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { message } from "antd";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { stateLoading, dataRefresh } from "../service/redux/actions";
+import { setIsLoading, setIsDataNeedRefresh } from "../service/globalData";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { yellow } from "@mui/material/colors";
@@ -57,7 +57,7 @@ const Poster = () => {
 
   const postHandler = async (values) => {
     try {
-      dispatch(stateLoading(true));
+      dispatch(setIsLoading(true));
       if (!postImgFile) {
         setIsPostImgErr(true);
         message.error("Image is required !");
@@ -72,7 +72,8 @@ const Poster = () => {
       const formData = {
         title: values.title,
         is_public: values.is_public ? 1 : 0,
-        image_url: imgRes.url
+        image_url: imgRes.url,
+        public_id: imgRes.public_id
       };
 
       const postRes = await axios.post(
@@ -81,13 +82,13 @@ const Poster = () => {
       );
       if (postRes.data.success) {
         closeModal();
-        dispatch(stateLoading(false));
-        dispatch(dataRefresh(true));
+        dispatch(setIsLoading(false));
+        dispatch(setIsDataNeedRefresh(true));
         message.success("Posted successfully !");
         return;
       }
     } catch (err) {
-      dispatch(stateLoading(false));
+      dispatch(setIsLoading(false));
 
       if (err instanceof Error) {
         message.error(`Posted failed: ${err.message}`, 5);

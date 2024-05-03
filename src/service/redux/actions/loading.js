@@ -1,4 +1,4 @@
-export const stateLoading = (isLoading) => {
+export const setLoading = (isLoading) => {
   return {
     type: "STATE_LOADING",
     payload: isLoading
